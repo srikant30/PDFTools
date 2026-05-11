@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PDF Toolkit</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<!-- PDF LIB -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<!-- PDF JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+
+:root{
+    --primary:#2563eb;
+    --bg:#f8fafc;
+    --card:#ffffff;
+    --border:#e2e8f0;
+    --text:#0f172a;
+    --muted:#64748b;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:30px;
+}
+
+.container{
+    max-width:1400px;
+    margin:auto;
+}
+
+.header{
+    margin-bottom:30px;
+}
+
+.header h1{
+    font-size:2rem;
+    font-weight:800;
+    color:var(--primary);
+}
+
+.header p{
+    margin-top:8px;
+    color:var(--muted);
+}
+
+.tool-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 4px 6px rgba(0,0,0,0.05);
+}
+
+.card h2{
+    color:var(--primary);
+    margin-bottom:15px;
+    font-size:1.2rem;
+}
+
+.card p{
+    color:var(--muted);
+    margin-bottom:15px;
+    font-size:0.92rem;
+    line-height:1.5;
+}
+
+input[type=file],
+input[type=text],
+input[type=password],
+input[type=number]{
+    width:100%;
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    margin-bottom:15px;
+    font-size:0.9rem;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:var(--primary);
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+.status{
+    margin-top:12px;
+    color:green;
+    font-size:0.85rem;
+    word-break:break-word;
+}
+
+.footer-note{
+    margin-top:30px;
+    background:white;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:15px;
+    text-align:center;
+    color:var(--muted);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>📄 MultiAssist PDF Toolkit</h1>
+
+        <p>
+            Browser-based PDF processing toolkit.
+            No files are uploaded to any server.
+        </p>
+    </div>
+
+    <div class="tool-grid">
+
+        <!-- Merge PDFs -->
+        <div class="card">
+
+            <h2>Merge PDFs</h2>
+
+            <p>
+                Combine multiple PDF files into a single document.
+            </p>
+
+            <input type="file"
+                   id="mergeFiles"
+                   multiple
+                   accept=".pdf">
+
+            <button onclick="mergePDFs()">
+                Merge PDFs
+            </button>
+
+            <div class="status" id="mergeStatus"></div>
+
+        </div>
+
+        <!-- Split PDF -->
+        <div class="card">
+
+            <h2>Split PDF</h2>
+
+            <p>
+                Extract a specific page from a PDF.
+            </p>
+
+            <input type="file"
+                   id="splitFile"
+                   accept=".pdf">
+
+            <input type="number"
+                   id="pageNumber"
+                   placeholder="Enter Page Number">
+
+            <button onclick="splitPDF()">
+                Extract Page
+            </button>
+
+            <div class="status" id="splitStatus"></div>
+
+        </div>
+
+        <!-- Compress PDF -->
+        <div class="card">
+
+            <h2>Compress PDF</h2>
+
+            <p>
+                Optimize PDF size for sharing and storage.
+            </p>
+
+            <input type="file"
+                   id="compressFile"
+                   accept=".pdf">
+
+            <button onclick="compressPDF()">
+                Compress PDF
+            </button>
+
+            <div class="status" id="compressStatus"></div>
+
+        </div>
+
+        <!-- Watermark PDF -->
+        <div class="card">
+
+            <h2>Add Watermark</h2>
+
+            <p>
+                Add custom watermark text to every page.
+            </p>
+
+            <input type="file"
+                   id="watermarkFile"
+                   accept=".pdf">
+
+            <input type="text"
+                   id="watermarkText"
+                   placeholder="Enter Watermark Text">
+
+            <button onclick="watermarkPDF()">
+                Add Watermark
+            </button>
+
+            <div class="status" id="watermarkStatus"></div>
+
+        </div>
+
+        <!-- PDF to JPG -->
+        <div class="card">
+
+            <h2>PDF to JPG</h2>
+
+            <p>
+                Convert PDF pages into JPG images.
+            </p>
+
+            <input type="file"
+                   id="pdfToJpgFile"
+                   accept=".pdf">
+
+            <button onclick="pdfToJPG()">
+                Convert to JPG
+            </button>
+
+            <div class="status" id="pdfToJpgStatus"></div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-note">
+
+        🔒 100% Browser Processed |
+        No Backend |
+        No Server Upload |
+        Privacy Friendly
+
+    </div>
+
+</div>
+
+<script>
+
+const { PDFDocument, rgb, degrees } = PDFLib;
+
+
+// ======================================
+// DOWNLOAD HELPER
+// ======================================
+
+function downloadFile(bytes, filename){
+
+    const blob = new Blob([bytes], {
+        type:'application/pdf'
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+
+    a.href = url;
+
+    a.download = filename;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+
+// ======================================
+// MERGE PDFs
+// ======================================
+
+async function mergePDFs(){
+
+    const files =
+        document.getElementById('mergeFiles').files;
+
+    if(files.length < 2){
+
+        alert("Please select at least 2 PDFs.");
+        return;
+    }
+
+    const mergedPdf =
+        await PDFDocument.create();
+
+    for(const file of files){
+
+        const bytes =
+            await file.arrayBuffer();
+
+        const pdf =
+            await PDFDocument.load(bytes);
+
+        const copiedPages =
+            await mergedPdf.copyPages(
+                pdf,
+                pdf.getPageIndices()
+            );
+
+        copiedPages.forEach(page => {
+            mergedPdf.addPage(page);
+        });
+    }
+
+    const mergedBytes =
+        await mergedPdf.save();
+
+    downloadFile(
+        mergedBytes,
+        'Merged.pdf'
+    );
+
+    document.getElementById('mergeStatus')
+        .innerText = "PDFs merged successfully.";
+}
+
+
+// ======================================
+// SPLIT PDF
+// ======================================
+
+async function splitPDF(){
+
+    const file =
+        document.getElementById('splitFile').files[0];
+
+    const pageNumber =
+        parseInt(
+            document.getElementById('pageNumber').value
+        );
+
+    if(!file || !pageNumber){
+
+        alert("Select PDF and page number.");
+        return;
+    }
+
+    const bytes =
+        await file.arrayBuffer();
+
+    const pdf =
+        await PDFDocument.load(bytes);
+
+    if(pageNumber > pdf.getPageCount()){
+
+        alert("Invalid page number.");
+        return;
+    }
+
+    const newPdf =
+        await PDFDocument.create();
+
+    const [copiedPage] =
+        await newPdf.copyPages(
+            pdf,
+            [pageNumber - 1]
+        );
+
+    newPdf.addPage(copiedPage);
+
+    const newBytes =
+        await newPdf.save();
+
+    downloadFile(
+        newBytes,
+        'Extracted_Page.pdf'
+    );
+
+    document.getElementById('splitStatus')
+        .innerText = "Page extracted successfully.";
+}
+
+
+// ======================================
+// COMPRESS PDF
+// ======================================
+
+async function compressPDF(){
+
+    const file =
+        document.getElementById('compressFile').files[0];
+
+    if(!file){
+
+        alert("Please select a PDF.");
+        return;
+    }
+
+    const bytes =
+        await file.arrayBuffer();
+
+    const pdf =
+        await PDFDocument.load(bytes);
+
+    const compressedBytes =
+        await pdf.save({
+            useObjectStreams:true
+        });
+
+    downloadFile(
+        compressedBytes,
+        'Compressed.pdf'
+    );
+
+    document.getElementById('compressStatus')
+        .innerText = "PDF compressed successfully.";
+}
+
+
+// ======================================
+// WATERMARK PDF
+// ======================================
+
+async function watermarkPDF(){
+
+    const file =
+        document.getElementById('watermarkFile').files[0];
+
+    const watermarkText =
+        document.getElementById('watermarkText').value;
+
+    if(!file || !watermarkText){
+
+        alert("Select PDF and watermark text.");
+        return;
+    }
+
+    const bytes =
+        await file.arrayBuffer();
+
+    const pdf =
+        await PDFDocument.load(bytes);
+
+    const pages =
+        pdf.getPages();
+
+    pages.forEach(page => {
+
+        const { width, height } =
+            page.getSize();
+
+        page.drawText(watermarkText,{
+
+            x: width / 4,
+            y: height / 2,
+
+            size:40,
+
+            color: rgb(0.75,0.75,0.75),
+
+            rotate: degrees(-45),
+
+            opacity:0.4
+        });
+
+    });
+
+    const newBytes =
+        await pdf.save();
+
+    downloadFile(
+        newBytes,
+        'Watermarked.pdf'
+    );
+
+    document.getElementById('watermarkStatus')
+        .innerText = "Watermark added successfully.";
+}
+
+
+// ======================================
+// PDF TO JPG
+// ======================================
+
+async function pdfToJPG(){
+
+    const file =
+        document.getElementById('pdfToJpgFile').files[0];
+
+    if(!file){
+
+        alert("Please select a PDF.");
+        return;
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload = async function(){
+
+        const typedArray =
+            new Uint8Array(this.result);
+
+        const pdf =
+            await pdfjsLib
+            .getDocument(typedArray)
+            .promise;
+
+        for(let i=1; i<=pdf.numPages; i++){
+
+            const page =
+                await pdf.getPage(i);
+
+            const viewport =
+                page.getViewport({ scale:2 });
+
+            const canvas =
+                document.createElement('canvas');
+
+            const context =
+                canvas.getContext('2d');
+
+            canvas.width =
+                viewport.width;
+
+            canvas.height =
+                viewport.height;
+
+            await page.render({
+                canvasContext:context,
+                viewport:viewport
+            }).promise;
+
+            const imgData =
+                canvas.toDataURL('image/jpeg');
+
+            const a =
+                document.createElement('a');
+
+            a.href = imgData;
+
+            a.download = `Page_${i}.jpg`;
+
+            a.click();
+        }
+
+        document.getElementById('pdfToJpgStatus')
+            .innerText =
+            "PDF converted to JPG successfully.";
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+
+// ======================================
+// PASSWORD PROTECT PDF
+// ======================================
+
+async function protectPDF(){
+
+    const file =
+        document.getElementById('protectPdfFile').files[0];
+
+    const password =
+        document.getElementById('pdfPassword').value;
+
+    if(!file || !password){
+
+        alert("Select PDF and password.");
+        return;
+    }
+
+    const bytes =
+        await file.arrayBuffer();
+
+    const pdfDoc =
+        await PDFDocument.load(bytes);
+
+    const protectedBytes =
+        await pdfDoc.save({
+            userPassword:password,
+            ownerPassword:password
+        });
+
+    downloadFile(
+        protectedBytes,
+        'Protected.pdf'
+    );
+
+    document.getElementById('protectStatus')
+        .innerText =
+        "Password protected PDF created.";
+}
+
+
+// ======================================
+// PDF TO EXCEL
+// ======================================
+
+async function pdfToExcel(){
+
+    const file =
+        document.getElementById('pdfToExcelFile').files[0];
+
+    if(!file){
+
+        alert("Please select a PDF.");
+        return;
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload = async function(){
+
+        const typedArray =
+            new Uint8Array(this.result);
+
+        const pdf =
+            await pdfjsLib
+            .getDocument(typedArray)
+            .promise;
+
+        let extractedText = [];
+
+        for(let i=1; i<=pdf.numPages; i++){
+
+            const page =
+                await pdf.getPage(i);
+
+            const textContent =
+                await page.getTextContent();
+
+            const pageText =
+                textContent.items
+                .map(item => item.str)
+                .join(' ');
+
+            extractedText.push({
+                Page:i,
+                Content:pageText
+            });
+        }
+
+        const worksheet =
+            XLSX.utils.json_to_sheet(extractedText);
+
+        const workbook =
+            XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            "PDF Data"
+        );
+
+        XLSX.writeFile(
+            workbook,
+            "PDF_Data.xlsx"
+        );
+
+        document.getElementById('excelStatus')
+            .innerText =
+            "PDF converted to Excel successfully.";
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+</script>
+
+</body>
+</html>
